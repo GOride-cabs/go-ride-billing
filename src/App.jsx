@@ -22,9 +22,11 @@ export default function App() {
       const saved = localStorage.getItem('goride_company_settings');
       if (saved) {
         const parsed = JSON.parse(saved);
+        const hasOldAddress = !parsed.address || parsed.address === 'Tirupati, Andhra Pradesh - 517501' || parsed.address.includes('Gollavanigunta');
         return {
           ...DEFAULT_COMPANY,
           ...parsed,
+          address: hasOldAddress ? DEFAULT_COMPANY.address : parsed.address,
           proprietor: parsed.proprietor || DEFAULT_COMPANY.proprietor,
           ownerContact: parsed.ownerContact || DEFAULT_COMPANY.ownerContact,
           email: parsed.email || DEFAULT_COMPANY.email,

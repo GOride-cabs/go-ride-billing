@@ -3,10 +3,10 @@ export const DEFAULT_COMPANY = {
   proprietor: 'N Viswanadham',
   designation: 'Managing Proprietor',
   tagline: 'Safe • Comfortable • On Time',
-  ownerContact: '+91 85009 53558',
+  ownerContact: '085009 53558',
   email: 'Goridetirupaticab@gmail.com',
   website: 'www.goridetirupatitravels.in',
-  address: 'Tirupati, Andhra Pradesh - 517501',
+  address: 'M Complex, Chinthalachenu Rd, near RTC Busstand, Kothapalli, Tirupati, Andhra Pradesh 517501',
   gstin: '', // No GSTIN
   pan: '',
   upiId: '8500953558@upi',

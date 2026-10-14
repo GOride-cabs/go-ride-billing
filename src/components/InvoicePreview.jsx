@@ -115,7 +115,7 @@ export default function InvoicePreview({ invoice, company, id = "invoice-printab
             <div style={{ display: 'flex', alignItems: 'center', gap: '6px' }}>
               <Phone size={12} color="#d97706" style={{ flexShrink: 0 }} />
               <span>
-                <strong>Mobile / WhatsApp:</strong> {company.ownerContact || '+91 85009 53558'}
+                <strong>Mobile / WhatsApp:</strong> {company.ownerContact || '085009 53558'}
               </span>
             </div>
 
@@ -128,7 +128,7 @@ export default function InvoicePreview({ invoice, company, id = "invoice-printab
 
             <div style={{ display: 'flex', alignItems: 'flex-start', gap: '6px' }}>
               <MapPin size={12} color="#d97706" style={{ marginTop: '2px', flexShrink: 0 }} />
-              <span>{company.address || 'Tirupati, Andhra Pradesh - 517501'}</span>
+              <span>{company.address || 'M Complex, Chinthalachenu Rd, near RTC Busstand, Kothapalli, Tirupati, Andhra Pradesh 517501'}</span>
             </div>
 
             {company.website && (
