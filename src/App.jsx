@@ -118,12 +118,22 @@ export default function App() {
     const calc = computeInvoice(invoice);
     const phone = invoice.customerMobile.replace(/[^0-9]/g, '');
 
+    const isRound = invoice.tripType === 'round_trip';
+    let itineraryLines = '';
+    if (isRound && invoice.roundTripDays?.length > 0) {
+      const valid = invoice.roundTripDays.filter((d) => d.placesVisited || d.date);
+      if (valid.length > 0) {
+        itineraryLines = '\n' + valid.map((d) => `• *Day-${d.dayNumber}* (${d.date || 'Scheduled'}): ${d.placesVisited || 'Places visited'}`).join('\n');
+      }
+    }
+
     const text = `*🚕 GORIDE TIRUPATI CABS - TRIP BILL*
 ---------------------------------------
 *Invoice No:* ${invoice.invoiceNumber}
-*Customer:* ${invoice.customerName}
+*Customer:* ${invoice.customerName || 'Devotee / Passenger'}
 *Vehicle:* ${invoice.carType} (${invoice.vehicleNumber || 'Cab'})
-*Trip:* ${invoice.pickupLocation} ➡️ ${invoice.dropLocation}
+*Trip Type:* ${isRound ? `🔄 Round Trip (${invoice.roundTripDays?.length || 2} Days)` : '➡️ One-Way Drop'}
+*Route:* ${invoice.pickupLocation} ➡️ ${invoice.dropLocation}${itineraryLines ? `\n\n*📅 Day-Wise Itinerary:*${itineraryLines}` : ''}
 *Total Distance:* ${invoice.totalKm ? `${invoice.totalKm} KM` : 'N/A'}
 *Trip Duration:* ${invoice.hoursUsed ? `${invoice.hoursUsed} Hours` : 'N/A'}
 ---------------------------------------
@@ -168,6 +178,11 @@ _Contact:_ ${company.proprietor || 'N Viswanadham'} (${company.ownerContact})`;
       invoiceDate: getTodayDateString(),
       pickupDateTime: '',
       tripPackageName: 'Custom / Local Trip Booking',
+      tripType: 'one_way',
+      roundTripDays: [
+        { dayNumber: 1, date: getTodayDateString(), placesVisited: '' },
+        { dayNumber: 2, date: '', placesVisited: '' },
+      ],
       selectedSights: [],
       customerName: '',
       customerMobile: '',

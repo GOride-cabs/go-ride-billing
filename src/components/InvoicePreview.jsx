@@ -260,8 +260,10 @@ export default function InvoicePreview({ invoice, company, id = "invoice-printab
               {invoice.pickupLocation || 'Tirupati (Doorstep / Station / Airport)'}
             </div>
             <div>
-              <span style={{ color: '#dc2626', fontWeight: 800 }}>Drop:</span>{' '}
-              {invoice.dropLocation || 'Tirumala Hill / Temple Destination'}
+              <span style={{ color: '#dc2626', fontWeight: 800 }}>
+                {invoice.tripType === 'round_trip' ? 'Tour / Return:' : 'Drop:'}
+              </span>{' '}
+              {invoice.dropLocation || (invoice.tripType === 'round_trip' ? 'Sightseeing & Return to Tirupati' : 'Tirumala Hill / Temple Destination')}
             </div>
             {invoice.pickupDateTime && (
               <div style={{ color: '#475569', fontSize: '10px', marginTop: '2px' }}>
@@ -296,22 +298,39 @@ export default function InvoicePreview({ invoice, company, id = "invoice-printab
             <Car size={11} /> Vehicle & Route Details
           </div>
 
-          {invoice.tripPackageName && (
-            <div
-              style={{
-                fontSize: '10px',
-                fontWeight: 700,
-                color: '#92400e',
-                background: '#fef3c7',
-                padding: '2px 6px',
-                borderRadius: '4px',
-                display: 'inline-block',
-                marginBottom: '3px',
-              }}
-            >
-              📍 {invoice.tripPackageName}
-            </div>
-          )}
+          <div style={{ display: 'flex', alignItems: 'center', gap: '6px', flexWrap: 'wrap', marginBottom: '3px' }}>
+            {invoice.tripPackageName && (
+              <span
+                style={{
+                  fontSize: '10px',
+                  fontWeight: 700,
+                  color: '#92400e',
+                  background: '#fef3c7',
+                  padding: '2px 6px',
+                  borderRadius: '4px',
+                  display: 'inline-block',
+                }}
+              >
+                📍 {invoice.tripPackageName}
+              </span>
+            )}
+            {invoice.tripType === 'round_trip' && (
+              <span
+                style={{
+                  fontSize: '9.5px',
+                  fontWeight: 800,
+                  color: '#166534',
+                  background: '#dcfce7',
+                  border: '1px solid #bbf7d0',
+                  padding: '1px 6px',
+                  borderRadius: '4px',
+                  textTransform: 'uppercase',
+                }}
+              >
+                🔄 Round Trip ({invoice.roundTripDays?.length || 2} Days)
+              </span>
+            )}
+          </div>
 
           <div style={{ fontSize: '13px', fontWeight: 800, color: '#0f172a', marginBottom: '2px' }}>
             {invoice.carType || 'Swift Dzire (Sedan - 4 + 1 Seater)'}
@@ -369,7 +388,81 @@ export default function InvoicePreview({ invoice, company, id = "invoice-printab
         </div>
       </div>
 
-      {/* 2.5 SACRED SIGHTS VISITED (IF ANY) */}
+      {/* 2.5 ROUND TRIP DAY-WISE ITINERARY (DAY 1, DAY 2 PLACES VISITED) */}
+      {invoice.tripType === 'round_trip' && invoice.roundTripDays && invoice.roundTripDays.length > 0 && (
+        <div
+          style={{
+            background: '#f0fdf4',
+            border: '1px solid #bbf7d0',
+            borderRadius: '6px',
+            padding: '6px 10px',
+            margin: '8px 0',
+          }}
+        >
+          <div
+            style={{
+              fontSize: '10px',
+              fontWeight: 800,
+              textTransform: 'uppercase',
+              color: '#166534',
+              letterSpacing: '0.4px',
+              marginBottom: '4px',
+              display: 'flex',
+              alignItems: 'center',
+              justifyContent: 'space-between',
+              gap: '4px',
+            }}
+          >
+            <span>🔄 Round Trip Day-Wise Tour Itinerary:</span>
+            <span style={{ fontSize: '9px', fontWeight: 700, color: '#15803d' }}>
+              {invoice.roundTripDays.length} Days Tour
+            </span>
+          </div>
+
+          <div style={{ display: 'flex', flexDirection: 'column', gap: '4px' }}>
+            {invoice.roundTripDays.map((day, idx) => (
+              <div
+                key={idx}
+                style={{
+                  display: 'flex',
+                  alignItems: 'baseline',
+                  gap: '6px',
+                  fontSize: '10.5px',
+                  background: '#ffffff',
+                  padding: '3px 8px',
+                  borderRadius: '4px',
+                  border: '1px solid #dcfce7',
+                  lineHeight: 1.35,
+                }}
+              >
+                <span
+                  style={{
+                    background: '#15803d',
+                    color: '#ffffff',
+                    fontSize: '9.5px',
+                    fontWeight: 800,
+                    padding: '1px 5px',
+                    borderRadius: '3px',
+                    flexShrink: 0,
+                  }}
+                >
+                  Day {day.dayNumber || idx + 1}
+                </span>
+                {day.date && (
+                  <span style={{ fontWeight: 700, color: '#14532d', flexShrink: 0, fontSize: '10px' }}>
+                    [{day.date}]:
+                  </span>
+                )}
+                <span style={{ color: '#1e293b', fontWeight: 600 }}>
+                  {day.placesVisited || 'Places / temples visited as per tour schedule'}
+                </span>
+              </div>
+            ))}
+          </div>
+        </div>
+      )}
+
+      {/* 2.6 SACRED SIGHTS VISITED (IF ANY) */}
       {invoice.selectedSights && invoice.selectedSights.length > 0 && (
         <div
           style={{

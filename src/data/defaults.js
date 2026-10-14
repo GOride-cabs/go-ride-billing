@@ -358,8 +358,13 @@ export const INITIAL_INVOICE_DATA = {
   invoiceDate: getTodayDateString(),
   dueDate: getTodayDateString(),
 
-  // Selected Trip package
+  // Selected Trip package & Route Type
   tripPackageName: 'Tirupati to Tirumala (1 Day)',
+  tripType: 'one_way', // 'one_way' | 'round_trip'
+  roundTripDays: [
+    { dayNumber: 1, date: getTodayDateString(), placesVisited: '' },
+    { dayNumber: 2, date: '', placesVisited: '' },
+  ],
 
   // Selected sights
   selectedSights: [],

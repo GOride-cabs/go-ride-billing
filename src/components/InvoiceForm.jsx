@@ -23,7 +23,11 @@ import {
   Tag,
   FileText,
   Sliders,
-  DollarSign
+  DollarSign,
+  Plus,
+  Trash2,
+  Repeat,
+  ArrowRight
 } from 'lucide-react';
 import {
   CAR_TYPES,
@@ -60,16 +64,141 @@ export default function InvoiceForm({
     }));
   };
 
+  const handleTripTypeChange = (type) => {
+    setInvoice((prev) => {
+      const existingDays =
+        prev.roundTripDays && prev.roundTripDays.length > 0
+          ? prev.roundTripDays
+          : [
+              { dayNumber: 1, date: prev.invoiceDate || getTodayDateString(), placesVisited: '' },
+              { dayNumber: 2, date: '', placesVisited: '' },
+            ];
+      return {
+        ...prev,
+        tripType: type,
+        roundTripDays: existingDays,
+      };
+    });
+  };
+
+  const handleAddDay = () => {
+    setInvoice((prev) => {
+      const days = prev.roundTripDays || [];
+      const nextDayNum = days.length + 1;
+      return {
+        ...prev,
+        roundTripDays: [
+          ...days,
+          { dayNumber: nextDayNum, date: '', placesVisited: '' },
+        ],
+      };
+    });
+  };
+
+  const handleRemoveDay = (index) => {
+    setInvoice((prev) => {
+      const days = (prev.roundTripDays || []).filter((_, idx) => idx !== index);
+      const reindexed = days.map((d, i) => ({ ...d, dayNumber: i + 1 }));
+      return {
+        ...prev,
+        roundTripDays: reindexed,
+      };
+    });
+  };
+
+  const handleUpdateDay = (index, field, value) => {
+    setInvoice((prev) => {
+      const days = [...(prev.roundTripDays || [])];
+      if (!days[index]) return prev;
+      days[index] = { ...days[index], [field]: value };
+      return { ...prev, roundTripDays: days };
+    });
+  };
+
+  const handleAppendPlaceToDay = (index, placeName) => {
+    setInvoice((prev) => {
+      const days = [...(prev.roundTripDays || [])];
+      if (!days[index]) return prev;
+      const current = days[index].placesVisited || '';
+      const updated = current ? `${current}, ${placeName}` : placeName;
+      days[index] = { ...days[index], placesVisited: updated };
+      return { ...prev, roundTripDays: days };
+    });
+  };
+
+  const handleApplyPresetItinerary = (presetType) => {
+    if (presetType === '2day-arunachalam') {
+      setInvoice((prev) => ({
+        ...prev,
+        tripType: 'round_trip',
+        roundTripDays: [
+          {
+            dayNumber: 1,
+            date: prev.invoiceDate || getTodayDateString(),
+            placesVisited: 'Kanipakam Vinayaka, Vellore Golden Temple, Arunachalam Giri Pradakshina (Night Halt)',
+          },
+          {
+            dayNumber: 2,
+            date: '',
+            placesVisited: 'Arunachaleswarar Temple, Kanchipuram Kamakshi Amman, Tiruttani Murugan Temple',
+          },
+        ],
+      }));
+    } else if (presetType === '2day-tirupati-tirumala') {
+      setInvoice((prev) => ({
+        ...prev,
+        tripType: 'round_trip',
+        roundTripDays: [
+          {
+            dayNumber: 1,
+            date: prev.invoiceDate || getTodayDateString(),
+            placesVisited: 'Tirupati Valley Temples (Sri Padmavathi Ammavari, Govindaraja Swamy, Kapila Theertham, ISKCON)',
+          },
+          {
+            dayNumber: 2,
+            date: '',
+            placesVisited: 'Tirumala Hilltop Darshan (Sri Venkateswara Swamy, Akasa Ganga, Papavinasam, Silathoranam, Srivari Padalu)',
+          },
+        ],
+      }));
+    }
+  };
+
   const handleTripSelect = (pkg) => {
-    setInvoice((prev) => ({
-      ...prev,
-      tripPackageName: pkg.name,
-      pickupLocation: pkg.pickup,
-      dropLocation: pkg.drop,
-      totalKm: pkg.distanceKm,
-      hoursUsed: pkg.hours,
-      specialNotes: pkg.notes,
-    }));
+    const isTwoDay = pkg.name.toLowerCase().includes('2 day') || pkg.name.toLowerCase().includes('two day');
+
+    setInvoice((prev) => {
+      let tripType = prev.tripType;
+      let roundTripDays = prev.roundTripDays;
+
+      if (isTwoDay) {
+        tripType = 'round_trip';
+        roundTripDays = [
+          {
+            dayNumber: 1,
+            date: prev.invoiceDate || getTodayDateString(),
+            placesVisited: 'Kanipakam Vinayaka, Vellore Golden Temple, Arunachalam Giri Pradakshina (Night Halt)',
+          },
+          {
+            dayNumber: 2,
+            date: '',
+            placesVisited: 'Arunachaleswarar Temple, Kanchipuram Kamakshi Amman, Tiruttani Murugan Temple',
+          },
+        ];
+      }
+
+      return {
+        ...prev,
+        tripPackageName: pkg.name,
+        tripType: tripType || prev.tripType,
+        roundTripDays: roundTripDays || prev.roundTripDays,
+        pickupLocation: pkg.pickup,
+        dropLocation: pkg.drop,
+        totalKm: pkg.distanceKm,
+        hoursUsed: pkg.hours,
+        specialNotes: pkg.notes,
+      };
+    });
   };
 
   const handleRegenerateInvoiceNo = () => {
@@ -581,6 +710,336 @@ export default function InvoiceForm({
               />
             </div>
           </div>
+
+          {/* TRIP JOURNEY TYPE: ONE-WAY vs ROUND TRIP */}
+          <div
+            style={{
+              marginTop: '12px',
+              padding: '12px',
+              background: '#ffffff',
+              borderRadius: '8px',
+              border: '1px solid #cbd5e1',
+            }}
+          >
+            <div
+              style={{
+                display: 'flex',
+                justifyContent: 'space-between',
+                alignItems: 'center',
+                flexWrap: 'wrap',
+                gap: '8px',
+                marginBottom: '8px',
+              }}
+            >
+              <label style={{ fontSize: '12px', fontWeight: 800, color: '#1e293b' }}>
+                Trip Journey Type:
+              </label>
+              <span style={{ fontSize: '11px', color: '#64748b' }}>
+                {invoice.tripType === 'round_trip' ? '🔄 Multi-Day / Return Journey' : '➡️ Single Drop'}
+              </span>
+            </div>
+
+            <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fit, minmax(180px, 1fr))', gap: '8px' }}>
+              <button
+                type="button"
+                onClick={() => handleTripTypeChange('one_way')}
+                style={{
+                  padding: '9px 12px',
+                  borderRadius: '6px',
+                  border: invoice.tripType !== 'round_trip' ? '2px solid #2563eb' : '1px solid #cbd5e1',
+                  background: invoice.tripType !== 'round_trip' ? '#eff6ff' : '#ffffff',
+                  color: invoice.tripType !== 'round_trip' ? '#1d4ed8' : '#475569',
+                  fontWeight: invoice.tripType !== 'round_trip' ? 800 : 600,
+                  fontSize: '12.5px',
+                  cursor: 'pointer',
+                  display: 'flex',
+                  alignItems: 'center',
+                  justifyContent: 'center',
+                  gap: '6px',
+                  transition: 'all 0.15s ease',
+                }}
+              >
+                <span>➡️ One-Way / Drop</span>
+              </button>
+
+              <button
+                type="button"
+                onClick={() => handleTripTypeChange('round_trip')}
+                style={{
+                  padding: '9px 12px',
+                  borderRadius: '6px',
+                  border: invoice.tripType === 'round_trip' ? '2px solid #16a34a' : '1px solid #cbd5e1',
+                  background: invoice.tripType === 'round_trip' ? '#f0fdf4' : '#ffffff',
+                  color: invoice.tripType === 'round_trip' ? '#15803d' : '#475569',
+                  fontWeight: invoice.tripType === 'round_trip' ? 800 : 600,
+                  fontSize: '12.5px',
+                  cursor: 'pointer',
+                  display: 'flex',
+                  alignItems: 'center',
+                  justifyContent: 'center',
+                  gap: '6px',
+                  boxShadow: invoice.tripType === 'round_trip' ? '0 1px 3px rgba(22, 163, 74, 0.2)' : 'none',
+                  transition: 'all 0.15s ease',
+                }}
+              >
+                <span>🔄 Round Trip ({invoice.roundTripDays?.length || 2} Days)</span>
+              </button>
+            </div>
+          </div>
+
+          {/* ROUND TRIP DAY-WISE ITINERARY EDITOR (DAY 1, DAY 2, DAY 3...) */}
+          {invoice.tripType === 'round_trip' && (
+            <div
+              style={{
+                marginTop: '12px',
+                padding: '14px',
+                background: '#f0fdf4',
+                borderRadius: '10px',
+                border: '1.5px solid #86efac',
+                animation: 'fadeIn 0.2s ease-out',
+              }}
+            >
+              <div
+                style={{
+                  display: 'flex',
+                  justifyContent: 'space-between',
+                  alignItems: 'center',
+                  flexWrap: 'wrap',
+                  gap: '8px',
+                  marginBottom: '10px',
+                  paddingBottom: '8px',
+                  borderBottom: '1px dashed #bbf7d0',
+                }}
+              >
+                <div>
+                  <div style={{ fontSize: '13px', fontWeight: 800, color: '#166534', display: 'flex', alignItems: 'center', gap: '6px' }}>
+                    <span>📅 Round Trip Day-Wise Tour Itinerary</span>
+                    <span
+                      style={{
+                        background: '#15803d',
+                        color: '#ffffff',
+                        fontSize: '10.5px',
+                        padding: '1px 7px',
+                        borderRadius: '9999px',
+                        fontWeight: 800,
+                      }}
+                    >
+                      {invoice.roundTripDays?.length || 0} Days
+                    </span>
+                  </div>
+                  <div style={{ fontSize: '11px', color: '#15803d', marginTop: '2px' }}>
+                    Enter date and places visited for Day-1, Day-2, etc. (Printed directly on Invoice & PDF)
+                  </div>
+                </div>
+
+                {/* Quick Tour Presets */}
+                <div style={{ display: 'flex', gap: '6px', flexWrap: 'wrap' }}>
+                  <button
+                    type="button"
+                    onClick={() => handleApplyPresetItinerary('2day-arunachalam')}
+                    style={{
+                      fontSize: '10.5px',
+                      padding: '4px 8px',
+                      borderRadius: '4px',
+                      border: '1px solid #86efac',
+                      background: '#ffffff',
+                      color: '#166534',
+                      fontWeight: 700,
+                      cursor: 'pointer',
+                    }}
+                    title="Load Kanipakam - Golden Temple - Arunachalam - Kanchi preset"
+                  >
+                    ⚡ Arunachalam 2-Day Preset
+                  </button>
+                  <button
+                    type="button"
+                    onClick={() => handleApplyPresetItinerary('2day-tirupati-tirumala')}
+                    style={{
+                      fontSize: '10.5px',
+                      padding: '4px 8px',
+                      borderRadius: '4px',
+                      border: '1px solid #86efac',
+                      background: '#ffffff',
+                      color: '#166534',
+                      fontWeight: 700,
+                      cursor: 'pointer',
+                    }}
+                    title="Load Tirupati Valley & Tirumala Hilltop 2-Day preset"
+                  >
+                    ⚡ Tirumala 2-Day Preset
+                  </button>
+                </div>
+              </div>
+
+              {/* LIST OF DAYS */}
+              <div style={{ display: 'flex', flexDirection: 'column', gap: '10px' }}>
+                {(invoice.roundTripDays || []).map((day, idx) => (
+                  <div
+                    key={idx}
+                    style={{
+                      background: '#ffffff',
+                      borderRadius: '8px',
+                      border: '1px solid #bbf7d0',
+                      padding: '10px 12px',
+                      boxShadow: '0 1px 3px rgba(0,0,0,0.03)',
+                    }}
+                  >
+                    {/* Day Header Row */}
+                    <div
+                      style={{
+                        display: 'flex',
+                        justifyContent: 'space-between',
+                        alignItems: 'center',
+                        gap: '8px',
+                        marginBottom: '8px',
+                        flexWrap: 'wrap',
+                      }}
+                    >
+                      <div style={{ display: 'flex', alignItems: 'center', gap: '8px' }}>
+                        <span
+                          style={{
+                            background: '#15803d',
+                            color: '#ffffff',
+                            fontWeight: 800,
+                            fontSize: '11px',
+                            padding: '3px 8px',
+                            borderRadius: '4px',
+                            textTransform: 'uppercase',
+                            letterSpacing: '0.4px',
+                          }}
+                        >
+                          Day {day.dayNumber || idx + 1}
+                        </span>
+
+                        <div style={{ display: 'flex', alignItems: 'center', gap: '4px' }}>
+                          <span style={{ fontSize: '11px', fontWeight: 700, color: '#475569' }}>Date:</span>
+                          <input
+                            type="date"
+                            value={day.date || ''}
+                            onChange={(e) => handleUpdateDay(idx, 'date', e.target.value)}
+                            style={{
+                              padding: '4px 8px',
+                              borderRadius: '4px',
+                              border: '1px solid #cbd5e1',
+                              fontSize: '11.5px',
+                              fontWeight: 600,
+                            }}
+                          />
+                        </div>
+                      </div>
+
+                      {(invoice.roundTripDays || []).length > 1 && (
+                        <button
+                          type="button"
+                          onClick={() => handleRemoveDay(idx)}
+                          style={{
+                            background: 'transparent',
+                            border: 'none',
+                            color: '#dc2626',
+                            fontSize: '11px',
+                            fontWeight: 700,
+                            cursor: 'pointer',
+                            display: 'flex',
+                            alignItems: 'center',
+                            gap: '3px',
+                            padding: '2px 6px',
+                            borderRadius: '4px',
+                          }}
+                        >
+                          <Trash2 size={12} /> Remove Day
+                        </button>
+                      )}
+                    </div>
+
+                    {/* Places Visited Input */}
+                    <div>
+                      <label style={{ fontSize: '11px', fontWeight: 700, color: '#334155', display: 'block', marginBottom: '3px' }}>
+                        Places / Temples Visited (Day-{day.dayNumber || idx + 1}):
+                      </label>
+                      <input
+                        type="text"
+                        placeholder="e.g. Tirumala Balaji Darshan, Akasa Ganga, Papavinasam, Silathoranam"
+                        value={day.placesVisited || ''}
+                        onChange={(e) => handleUpdateDay(idx, 'placesVisited', e.target.value)}
+                        style={{
+                          width: '100%',
+                          padding: '7px 10px',
+                          borderRadius: '6px',
+                          border: '1px solid #cbd5e1',
+                          fontSize: '12.5px',
+                          fontWeight: 500,
+                        }}
+                      />
+                    </div>
+
+                    {/* Quick Suggestions Tap Chips */}
+                    <div style={{ marginTop: '6px', display: 'flex', alignItems: 'center', gap: '4px', flexWrap: 'wrap' }}>
+                      <span style={{ fontSize: '10px', color: '#64748b', fontWeight: 600 }}>Quick Add:</span>
+                      {[
+                        'Tirumala Balaji',
+                        'Akasa Ganga',
+                        'Papavinasam',
+                        'Silathoranam',
+                        'Srivari Padalu',
+                        'Padmavathi Ammavari',
+                        'Srikalahasti',
+                        'Kanipakam',
+                        'Golden Temple',
+                        'Arunachalam',
+                        'Kanchipuram',
+                        'Tiruttani',
+                      ].map((temple) => (
+                        <button
+                          key={temple}
+                          type="button"
+                          onClick={() => handleAppendPlaceToDay(idx, temple)}
+                          style={{
+                            fontSize: '10px',
+                            padding: '2px 6px',
+                            borderRadius: '4px',
+                            border: '1px solid #e2e8f0',
+                            background: '#f8fafc',
+                            color: '#334155',
+                            cursor: 'pointer',
+                            fontWeight: 600,
+                          }}
+                        >
+                          + {temple}
+                        </button>
+                      ))}
+                    </div>
+                  </div>
+                ))}
+              </div>
+
+              {/* Add Another Day Button */}
+              <div style={{ marginTop: '10px', display: 'flex', justifyContent: 'space-between', alignItems: 'center', flexWrap: 'wrap', gap: '8px' }}>
+                <button
+                  type="button"
+                  onClick={handleAddDay}
+                  style={{
+                    background: '#15803d',
+                    color: '#ffffff',
+                    border: 'none',
+                    borderRadius: '6px',
+                    padding: '7px 12px',
+                    fontSize: '11.5px',
+                    fontWeight: 700,
+                    cursor: 'pointer',
+                    display: 'flex',
+                    alignItems: 'center',
+                    gap: '4px',
+                    boxShadow: '0 1px 3px rgba(21, 128, 61, 0.25)',
+                  }}
+                >
+                  <Plus size={14} /> + Add Day {(invoice.roundTripDays?.length || 0) + 1}
+                </button>
+                <span style={{ fontSize: '11px', color: '#166534', fontWeight: 600 }}>
+                  Supports unlimited days (Day-1, Day-2, Day-3...)
+                </span>
+              </div>
+            </div>
+          )}
         </div>
 
         {/* 13 SACRED SIGHTS & ATTRACTIONS SELECTOR (COLLAPSIBLE FOR MOBILE) */}
