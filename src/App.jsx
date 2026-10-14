@@ -4,6 +4,7 @@ import InvoiceForm from './components/InvoiceForm';
 import InvoicePreview from './components/InvoicePreview';
 import CompanySettingsModal from './components/CompanySettingsModal';
 import HistoryDrawer from './components/HistoryDrawer';
+import InstallPwa from './components/InstallPwa';
 import {
   DEFAULT_COMPANY,
   INITIAL_INVOICE_DATA,
@@ -552,6 +553,9 @@ _Contact:_ ${company.proprietor || 'N Viswanadham'} (${company.ownerContact})`;
           <Printer size={16} />
         </button>
       </div>
+
+      {/* PWA Install Notification & Modal */}
+      <InstallPwa />
 
       {/* Settings Modal */}
       <CompanySettingsModal

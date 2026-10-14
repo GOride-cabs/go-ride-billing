@@ -10,6 +10,7 @@ import {
 } from 'lucide-react';
 import { computeInvoice } from '../utils/calculations';
 import { formatINR } from '../utils/numberToWords';
+import { NavbarInstallButton } from './InstallPwa';
 
 export default function HeaderNav({
   invoice,
@@ -322,6 +323,9 @@ _Contact:_ ${company.proprietor || 'N Viswanadham'} (${company.ownerContact})`;
               </span>
             )}
           </button>
+
+          {/* Install App Button */}
+          <NavbarInstallButton />
 
           {/* Settings */}
           <button
