@@ -1,16 +1,21 @@
-﻿{
+{
   "name": "GoRide Tirupati Cabs - Billing & Invoicing",
   "short_name": "GoRide Bill",
   "description": "Quick taxi billing, trip receipt generator, and PDF invoice manager for GoRide Tirupati Cabs.",
-  "start_url": "/",
-  "id": "/",
+  "start_url": "/?mode=pwa",
+  "id": "/?mode=pwa",
   "scope": "/",
   "display": "standalone",
   "orientation": "any",
   "background_color": "#0f172a",
   "theme_color": "#0f172a",
   "lang": "en-IN",
-  "categories": ["business", "finance", "productivity", "travel"],
+  "categories": [
+    "business",
+    "finance",
+    "productivity",
+    "travel"
+  ],
   "icons": [
     {
       "src": "/icons/icon-192.png",
@@ -42,7 +47,7 @@
       "name": "New Invoice",
       "short_name": "New Bill",
       "description": "Start a new taxi bill for customer",
-      "url": "/",
+      "url": "/?mode=pwa",
       "icons": [
         {
           "src": "/icons/icon-192.png",

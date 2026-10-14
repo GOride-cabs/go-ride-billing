@@ -1,3 +1,4 @@
+import PwaInstallGate from './components/PwaInstallGate';
 import React, { useState, useEffect } from 'react';
 import HeaderNav from './components/HeaderNav';
 import InvoiceForm from './components/InvoiceForm';
@@ -241,7 +242,8 @@ _Contact:_ ${company.proprietor || 'N Viswanadham'} (${company.ownerContact})`;
   const currentCalc = computeInvoice(invoice);
 
   return (
-    <div style={{ minHeight: '100vh', display: 'flex', flexDirection: 'column', background: '#f8fafc', paddingBottom: '70px' }}>
+    <PwaInstallGate>
+      <div style={{ minHeight: '100vh', display: 'flex', flexDirection: 'column', background: '#f8fafc', paddingBottom: '70px' }}>
       {/* Toast Notification */}
       {toast && (
         <div
@@ -573,6 +575,7 @@ _Contact:_ ${company.proprietor || 'N Viswanadham'} (${company.ownerContact})`;
         onLoadInvoice={handleLoadInvoice}
         onDeleteInvoice={handleDeleteInvoice}
       />
-    </div>
+      </div>
+    </PwaInstallGate>
   );
 }
