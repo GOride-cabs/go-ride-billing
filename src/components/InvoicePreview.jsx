@@ -263,6 +263,11 @@ export default function InvoicePreview({ invoice, company, id = "invoice-printab
               <span style={{ color: '#dc2626', fontWeight: 800 }}>Drop:</span>{' '}
               {invoice.dropLocation || 'Tirumala Hill / Temple Destination'}
             </div>
+            {invoice.pickupDateTime && (
+              <div style={{ color: '#475569', fontSize: '10px', marginTop: '2px' }}>
+                <strong>Trip Date & Time:</strong> {invoice.pickupDateTime}
+              </div>
+            )}
           </div>
         </div>
 
@@ -312,7 +317,7 @@ export default function InvoicePreview({ invoice, company, id = "invoice-printab
             {invoice.carType || 'Swift Dzire (Sedan - 4 + 1 Seater)'}
           </div>
 
-          <div style={{ display: 'flex', gap: '8px', alignItems: 'center', marginBottom: '4px' }}>
+          <div style={{ display: 'flex', gap: '8px', alignItems: 'center', marginBottom: '4px', flexWrap: 'wrap' }}>
             {invoice.vehicleNumber && (
               <span
                 style={{
@@ -328,9 +333,10 @@ export default function InvoicePreview({ invoice, company, id = "invoice-printab
                 {invoice.vehicleNumber}
               </span>
             )}
-            {invoice.driverName && (
+            {(invoice.driverName || invoice.driverMobile) && (
               <span style={{ fontSize: '11px', color: '#475569' }}>
-                Chauffeur: <strong>{invoice.driverName}</strong>
+                Chauffeur: <strong>{invoice.driverName || 'Assigned Driver'}</strong>
+                {invoice.driverMobile ? ` (📞 ${invoice.driverMobile})` : ''}
               </span>
             )}
           </div>

@@ -390,6 +390,7 @@ export const INITIAL_INVOICE_DATA = {
 
   // Billing calculation
   billingModel: 'both',
+  packageBasePrice: 0,
   totalKm: 85, // 85 km for complete sightseeing
   ratePerKm: 23, // Official Rs. 23 / km for Innova Crysta
   hoursUsed: 10,

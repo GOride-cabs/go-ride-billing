@@ -12,7 +12,7 @@ export function computeInvoice(invoice) {
     const amount = billableKm * rate;
     baseAmount += amount;
 
-    let desc = `Kilometer Fare (${billableKm} KM @ ₹${rate}/KM)`;
+    let desc = `Distance Driven: ${billableKm} KM (${invoice.carType || 'Cab'})`;
     if (minKm > 0 && km < minKm) {
       desc += ` [Min. commitment: ${minKm} KM]`;
     }
@@ -20,7 +20,7 @@ export function computeInvoice(invoice) {
       id: 'km-fare',
       description: desc,
       qty: `${billableKm} KM`,
-      rate: `₹${rate}`,
+      rate: `₹${rate}/KM`,
       amount: amount
     });
   } else if (model === 'hourly') {
@@ -41,8 +41,8 @@ export function computeInvoice(invoice) {
     baseAmount += pkgBase;
     lineItems.push({
       id: 'package-base',
-      description: invoice.packageName || 'Standard Trip Package Fare',
-      qty: '1 Package',
+      description: invoice.packageName || invoice.tripPackageName || 'Trip / Tour Package Fare (Fixed)',
+      qty: '1 Trip',
       rate: `₹${pkgBase}`,
       amount: pkgBase
     });
