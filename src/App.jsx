@@ -202,15 +202,6 @@ _Contact:_ ${company.proprietor || 'N Viswanadham'} (${company.ownerContact})`;
     showToast('Cleaned form for new invoice.');
   };
 
-  const handleLoadSample = () => {
-    setInvoice({
-      ...INITIAL_INVOICE_DATA,
-      invoiceNumber: generateInvoiceNumber(),
-      invoiceDate: getTodayDateString(),
-    });
-    showToast('Loaded GoRide sample data.');
-  };
-
   const handleLoadInvoice = (loaded) => {
     setInvoice(loaded);
     setIsHistoryOpen(false);
@@ -264,7 +255,6 @@ _Contact:_ ${company.proprietor || 'N Viswanadham'} (${company.ownerContact})`;
         onPrint={handlePrint}
         onSave={handleSaveInvoice}
         onReset={handleReset}
-        onLoadSample={handleLoadSample}
         onOpenHistory={() => setIsHistoryOpen(true)}
         onOpenSettings={() => setIsSettingsOpen(true)}
         savedCount={savedInvoices.length}
@@ -365,7 +355,6 @@ _Contact:_ ${company.proprietor || 'N Viswanadham'} (${company.ownerContact})`;
                 invoice={invoice}
                 setInvoice={setInvoice}
                 onReset={handleReset}
-                onLoadSample={handleLoadSample}
                 onDownloadPdf={handleDownloadPdf}
                 onPrint={handlePrint}
                 isGeneratingPdf={isGeneratingPdf}

@@ -37,7 +37,6 @@ export default function InvoiceForm({
   invoice,
   setInvoice,
   onReset,
-  onLoadSample,
   onDownloadPdf,
   onPrint,
   isGeneratingPdf
@@ -156,27 +155,7 @@ export default function InvoiceForm({
           </p>
         </div>
 
-        <div style={{ display: 'flex', gap: '8px' }}>
-          <button
-            type="button"
-            onClick={onLoadSample}
-            style={{
-              background: '#fef3c7',
-              border: '1px solid #fde68a',
-              color: '#92400e',
-              padding: '6px 10px',
-              borderRadius: '6px',
-              fontSize: '12px',
-              fontWeight: 700,
-              display: 'flex',
-              alignItems: 'center',
-              gap: '4px',
-              cursor: 'pointer',
-            }}
-          >
-            <Sparkles size={13} color="#d97706" /> Sample
-          </button>
-
+        <div>
           <button
             type="button"
             onClick={onReset}
@@ -184,17 +163,17 @@ export default function InvoiceForm({
               background: '#f1f5f9',
               border: '1px solid #cbd5e1',
               color: '#475569',
-              padding: '6px 10px',
-              borderRadius: '6px',
+              padding: '7px 12px',
+              borderRadius: '8px',
               fontSize: '12px',
-              fontWeight: 600,
+              fontWeight: 700,
               display: 'flex',
               alignItems: 'center',
-              gap: '4px',
+              gap: '5px',
               cursor: 'pointer',
             }}
           >
-            <RotateCcw size={13} /> Clear
+            <RotateCcw size={14} /> Clear / New Bill
           </button>
         </div>
       </div>

@@ -4,8 +4,6 @@ import {
   Save,
   Clock,
   Settings,
-  RotateCcw,
-  Sparkles,
   MessageCircle,
   Download,
   Share2
@@ -20,7 +18,6 @@ export default function HeaderNav({
   onPrint,
   onSave,
   onReset,
-  onLoadSample,
   onOpenHistory,
   onOpenSettings,
   savedCount,

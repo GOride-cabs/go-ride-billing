@@ -354,63 +354,54 @@ export function generateInvoiceNumber() {
 }
 
 export const INITIAL_INVOICE_DATA = {
-  invoiceNumber: 'GRT-202610-1842',
+  invoiceNumber: generateInvoiceNumber(),
   invoiceDate: getTodayDateString(),
   dueDate: getTodayDateString(),
 
   // Selected Trip package
-  tripPackageName: 'Complete Tirupati & Tirumala Sightseeing (13 Sights)',
+  tripPackageName: 'Tirupati to Tirumala (1 Day)',
 
-  // Selected 13 sights
-  selectedSights: [
-    'Sri Venkateswara Temple, Tirumala',
-    'Akasa Ganga',
-    'Papavinasam',
-    'Silathoranam (Natural Arch)',
-    'Srivari Padalu',
-    'Chakra Theertham',
-    'Sri Padmavathi Ammavari Temple – Tiruchanoor',
-    'Kapila Theertham & Falls',
-  ],
+  // Selected sights
+  selectedSights: [],
 
-  // Customer Details
-  customerName: 'Suresh Kumar Reddy',
-  customerMobile: '+91 85009 53558',
-  customerEmail: 'sureshreddy@example.com',
-  pickupLocation: 'Tirupati (Hotel / Rly Station / Residence)',
-  dropLocation: 'Tirumala Hilltop (8 Sights) + Tirupati Valley (5 Sights)',
+  // Customer Details (Blank, ready for genuine client entry)
+  customerName: '',
+  customerMobile: '',
+  customerEmail: '',
+  pickupLocation: 'Tirupati',
+  dropLocation: 'Tirumala Hill',
   pickupDateTime: '',
   dropDateTime: '',
 
-  // Vehicle details (Innova Crysta at official Rs 23 / km)
-  carType: 'Innova Crysta (Luxury MPV - 7 + 1 Seater)',
-  vehicleNumber: 'AP 03 BP 4589',
-  driverName: 'Ramesh Naidu',
-  driverMobile: '+91 94401 55667',
+  // Vehicle details (Default: Swift Dzire at official Rs 14 / km)
+  carType: 'Swift Dzire (Sedan - 4 + 1 Seater)',
+  vehicleNumber: '',
+  driverName: '',
+  driverMobile: '',
 
   // Billing calculation
-  billingModel: 'both',
+  billingModel: 'km',
   packageBasePrice: 0,
-  totalKm: 85, // 85 km for complete sightseeing
-  ratePerKm: 23, // Official Rs. 23 / km for Innova Crysta
-  hoursUsed: 10,
-  hourlyRate: 450,
+  totalKm: 0,
+  ratePerKm: 14,
+  hoursUsed: 0,
+  hourlyRate: 250,
 
   // Extra charges
-  tollCharges: 150,
-  parkingCharges: 100,
-  driverAllowance: 400,
+  tollCharges: 0,
+  parkingCharges: 0,
+  driverAllowance: 0,
   nightHaltCharges: 0,
   otherCharges: 0,
   otherChargesDesc: '',
 
-  // Taxes & Payments (No GSTIN, enableGst is false)
+  // Taxes & Payments (No GSTIN)
   enableGst: false,
   gstRate: 0,
   discount: 0,
-  advancePaid: 1000,
-  paymentMode: 'UPI (GPay / PhonePe)',
-  paymentStatus: 'Partially Paid',
+  advancePaid: 0,
+  paymentMode: 'Cash',
+  paymentStatus: 'Pending',
 
-  specialNotes: 'Complete 13 Sights Private AC Cab • Flexible Waiting for Darshan & Theertham Dips • Hill Road Experienced Chauffeur',
+  specialNotes: 'Clean Sanitized AC Cab • Experienced Ghat Road Chauffeur • 24/7 Tirupati Doorstep Pickup',
 };
