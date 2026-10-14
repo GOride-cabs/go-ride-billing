@@ -131,7 +131,7 @@ export default function App() {
 ---------------------------------------
 *Invoice No:* ${invoice.invoiceNumber}
 *Customer:* ${invoice.customerName || 'Devotee / Passenger'}
-*Vehicle:* ${invoice.carType} (${invoice.vehicleNumber || 'Cab'})
+${invoice.passengersBoarded ? `*Passengers Boarded:* ${invoice.passengersBoarded} Persons\n` : ''}*Vehicle:* ${invoice.carType} (${invoice.vehicleNumber || 'Cab'})
 *Trip Type:* ${isRound ? `🔄 Round Trip (${invoice.roundTripDays?.length || 2} Days)` : '➡️ One-Way Drop'}
 *Route:* ${invoice.pickupLocation} ➡️ ${invoice.dropLocation}${itineraryLines ? `\n\n*📅 Day-Wise Itinerary:*${itineraryLines}` : ''}
 *Total Distance:* ${invoice.totalKm ? `${invoice.totalKm} KM` : 'N/A'}
@@ -187,6 +187,7 @@ _Contact:_ ${company.proprietor || 'N Viswanadham'} (${company.ownerContact})`;
       customerName: '',
       customerMobile: '',
       customerEmail: '',
+      passengersBoarded: '',
       pickupLocation: 'Tirupati',
       dropLocation: 'Tirumala Hill',
       carType: 'Swift Dzire (Sedan - 4 + 1 Seater)',
@@ -201,7 +202,9 @@ _Contact:_ ${company.proprietor || 'N Viswanadham'} (${company.ownerContact})`;
       hourlyRate: 250,
       tollCharges: 0,
       parkingCharges: 0,
-      driverAllowance: 0,
+      driverAllowance: 300,
+      driverBattaPerDay: 300,
+      driverBattaDays: 1,
       nightHaltCharges: 0,
       otherCharges: 0,
       otherChargesDesc: '',

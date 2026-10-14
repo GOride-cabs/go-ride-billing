@@ -373,6 +373,7 @@ export const INITIAL_INVOICE_DATA = {
   customerName: '',
   customerMobile: '',
   customerEmail: '',
+  passengersBoarded: '',
   pickupLocation: 'Tirupati',
   dropLocation: 'Tirumala Hill',
   pickupDateTime: '',
@@ -392,10 +393,12 @@ export const INITIAL_INVOICE_DATA = {
   hoursUsed: 0,
   hourlyRate: 250,
 
-  // Extra charges
+  // Extra charges (Fixed Driver Batta at ₹300 / Day)
   tollCharges: 0,
   parkingCharges: 0,
-  driverAllowance: 0,
+  driverAllowance: 300,
+  driverBattaPerDay: 300,
+  driverBattaDays: 1,
   nightHaltCharges: 0,
   otherCharges: 0,
   otherChargesDesc: '',

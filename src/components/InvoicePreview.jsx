@@ -2,7 +2,7 @@ import React from 'react';
 import UpiQrCode from './UpiQrCode';
 import { computeInvoice } from '../utils/calculations';
 import { numberToIndianWords, formatINR } from '../utils/numberToWords';
-import { Phone, Mail, MapPin, Globe, Car, User, Navigation, Calendar } from 'lucide-react';
+import { Phone, Mail, MapPin, Globe, Car, User, Users, Navigation, Calendar } from 'lucide-react';
 
 export default function InvoicePreview({ invoice, company, id = "invoice-printable" }) {
   const calc = computeInvoice(invoice);
@@ -241,8 +241,27 @@ export default function InvoicePreview({ invoice, company, id = "invoice-printab
           </div>
 
           {invoice.customerEmail && (
-            <div style={{ fontSize: '11px', color: '#475569', marginBottom: '3px' }}>
+            <div style={{ fontSize: '11px', color: '#475569', marginBottom: '2px' }}>
               <strong>Email:</strong> {invoice.customerEmail}
+            </div>
+          )}
+
+          {invoice.passengersBoarded && (
+            <div style={{ fontSize: '11px', color: '#166534', marginTop: '3px', display: 'flex', alignItems: 'center', gap: '4px' }}>
+              <span style={{ fontWeight: 800 }}>👥 Passengers Boarded:</span>
+              <strong
+                style={{
+                  background: '#dcfce7',
+                  border: '1px solid #bbf7d0',
+                  color: '#15803d',
+                  padding: '1px 7px',
+                  borderRadius: '4px',
+                  fontSize: '10.5px',
+                  fontWeight: 800,
+                }}
+              >
+                {invoice.passengersBoarded} {Number(invoice.passengersBoarded) === 1 ? 'Passenger' : 'Passengers'}
+              </strong>
             </div>
           )}
 

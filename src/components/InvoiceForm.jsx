@@ -27,7 +27,8 @@ import {
   Plus,
   Trash2,
   Repeat,
-  ArrowRight
+  ArrowRight,
+  Users
 } from 'lucide-react';
 import {
   CAR_TYPES,
@@ -73,10 +74,13 @@ export default function InvoiceForm({
               { dayNumber: 1, date: prev.invoiceDate || getTodayDateString(), placesVisited: '' },
               { dayNumber: 2, date: '', placesVisited: '' },
             ];
+      const daysCount = type === 'round_trip' ? existingDays.length : 1;
+      const updatedBatta = daysCount * 300;
       return {
         ...prev,
         tripType: type,
         roundTripDays: existingDays,
+        driverAllowance: prev.driverAllowance !== undefined && Number(prev.driverAllowance) > 0 ? updatedBatta : prev.driverAllowance,
       };
     });
   };
@@ -85,12 +89,14 @@ export default function InvoiceForm({
     setInvoice((prev) => {
       const days = prev.roundTripDays || [];
       const nextDayNum = days.length + 1;
+      const updatedBatta = nextDayNum * 300;
       return {
         ...prev,
         roundTripDays: [
           ...days,
           { dayNumber: nextDayNum, date: '', placesVisited: '' },
         ],
+        driverAllowance: prev.driverAllowance !== undefined && Number(prev.driverAllowance) > 0 ? updatedBatta : prev.driverAllowance,
       };
     });
   };
@@ -99,9 +105,11 @@ export default function InvoiceForm({
     setInvoice((prev) => {
       const days = (prev.roundTripDays || []).filter((_, idx) => idx !== index);
       const reindexed = days.map((d, i) => ({ ...d, dayNumber: i + 1 }));
+      const updatedBatta = Math.max(1, reindexed.length) * 300;
       return {
         ...prev,
         roundTripDays: reindexed,
+        driverAllowance: prev.driverAllowance !== undefined && Number(prev.driverAllowance) > 0 ? updatedBatta : prev.driverAllowance,
       };
     });
   };
@@ -131,6 +139,7 @@ export default function InvoiceForm({
       setInvoice((prev) => ({
         ...prev,
         tripType: 'round_trip',
+        driverAllowance: 600, // 2 days * 300 fixed batta
         roundTripDays: [
           {
             dayNumber: 1,
@@ -148,6 +157,7 @@ export default function InvoiceForm({
       setInvoice((prev) => ({
         ...prev,
         tripType: 'round_trip',
+        driverAllowance: 600, // 2 days * 300 fixed batta
         roundTripDays: [
           {
             dayNumber: 1,
@@ -1248,6 +1258,73 @@ export default function InvoiceForm({
               </div>
             </div>
           </div>
+
+          {/* Number of Passengers Boarded */}
+          <div
+            style={{
+              background: '#ffffff',
+              padding: '10px 12px',
+              borderRadius: '8px',
+              border: '1px solid #cbd5e1',
+              marginTop: '2px',
+            }}
+          >
+            <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', flexWrap: 'wrap', gap: '6px', marginBottom: '4px' }}>
+              <label style={{ fontSize: '12px', fontWeight: 700, color: '#1e293b', display: 'flex', alignItems: 'center', gap: '5px' }}>
+                <Users size={14} color="#2563eb" /> Number of Passengers Boarded:
+              </label>
+              <span style={{ fontSize: '11px', color: '#64748b', fontWeight: 600 }}>
+                {invoice.passengersBoarded ? `${invoice.passengersBoarded} Pax Boarded` : 'Optional / Manual'}
+              </span>
+            </div>
+
+            <div style={{ display: 'flex', gap: '8px', alignItems: 'center', flexWrap: 'wrap' }}>
+              <input
+                type="number"
+                min="1"
+                max="50"
+                placeholder="e.g. 4"
+                value={invoice.passengersBoarded || ''}
+                onChange={(e) => handleChange('passengersBoarded', e.target.value)}
+                style={{
+                  width: '90px',
+                  padding: '7px 10px',
+                  borderRadius: '6px',
+                  border: '1.5px solid #cbd5e1',
+                  fontSize: '13.5px',
+                  fontWeight: 700,
+                  color: '#0f172a',
+                }}
+              />
+
+              {/* Quick passenger count buttons */}
+              <div style={{ display: 'flex', gap: '4px', flexWrap: 'wrap', alignItems: 'center' }}>
+                <span style={{ fontSize: '10.5px', color: '#64748b', fontWeight: 600 }}>Quick:</span>
+                {['1', '2', '3', '4', '5', '6', '7', '12', '14'].map((pax) => {
+                  const isSelected = String(invoice.passengersBoarded) === pax;
+                  return (
+                    <button
+                      key={pax}
+                      type="button"
+                      onClick={() => handleChange('passengersBoarded', pax)}
+                      style={{
+                        fontSize: '11px',
+                        padding: '3px 8px',
+                        borderRadius: '4px',
+                        border: isSelected ? '1.5px solid #2563eb' : '1px solid #cbd5e1',
+                        background: isSelected ? '#eff6ff' : '#f8fafc',
+                        color: isSelected ? '#1d4ed8' : '#334155',
+                        fontWeight: isSelected ? 800 : 600,
+                        cursor: 'pointer',
+                      }}
+                    >
+                      {pax} Pax
+                    </button>
+                  );
+                })}
+              </div>
+            </div>
+          </div>
         </div>
       </div>
 
@@ -1750,14 +1827,19 @@ export default function InvoiceForm({
           </div>
 
           <div>
-            <label style={{ fontSize: '11px', fontWeight: 600, color: '#475569' }}>
-              Driver Batta (₹)
-            </label>
+            <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>
+              <label style={{ fontSize: '11px', fontWeight: 700, color: '#334155' }}>
+                Driver Batta (Fixed ₹300/day)
+              </label>
+              <span style={{ fontSize: '10px', color: '#166534', fontWeight: 700 }}>
+                ₹300 / Day
+              </span>
+            </div>
             <input
               type="number"
               inputMode="numeric"
-              placeholder="e.g. 300"
-              value={invoice.driverAllowance || ''}
+              placeholder="300"
+              value={invoice.driverAllowance !== undefined ? invoice.driverAllowance : 300}
               onChange={(e) => handleChange('driverAllowance', e.target.value)}
               style={{
                 width: '100%',
@@ -1765,9 +1847,37 @@ export default function InvoiceForm({
                 borderRadius: '6px',
                 border: '1px solid #cbd5e1',
                 fontSize: '13px',
+                fontWeight: 600,
                 marginTop: '4px',
               }}
             />
+            {/* Quick Batta Day Chips */}
+            <div style={{ display: 'flex', gap: '3px', marginTop: '4px', flexWrap: 'wrap' }}>
+              {[
+                { label: '1 Day (₹300)', val: 300 },
+                { label: '2 Days (₹600)', val: 600 },
+                { label: '3 Days (₹900)', val: 900 },
+                { label: '₹0 (None)', val: 0 },
+              ].map((item) => (
+                <button
+                  key={item.label}
+                  type="button"
+                  onClick={() => handleChange('driverAllowance', item.val)}
+                  style={{
+                    fontSize: '9.5px',
+                    padding: '2px 5px',
+                    borderRadius: '3px',
+                    border: Number(invoice.driverAllowance) === item.val ? '1px solid #16a34a' : '1px solid #cbd5e1',
+                    background: Number(invoice.driverAllowance) === item.val ? '#f0fdf4' : '#ffffff',
+                    color: Number(invoice.driverAllowance) === item.val ? '#15803d' : '#475569',
+                    fontWeight: Number(invoice.driverAllowance) === item.val ? 800 : 600,
+                    cursor: 'pointer',
+                  }}
+                >
+                  {item.label}
+                </button>
+              ))}
+            </div>
           </div>
 
           <div>

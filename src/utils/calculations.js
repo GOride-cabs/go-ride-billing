@@ -128,14 +128,16 @@ export function computeInvoice(invoice) {
     });
   }
 
-  // Add Driver Allowance / Batta
+  // Add Driver Allowance / Batta (Fixed ₹300 / Day standard tariff)
   const batta = Number(invoice.driverAllowance) || 0;
   if (batta > 0) {
+    const isMultipleOf300 = batta % 300 === 0;
+    const days = isMultipleOf300 ? batta / 300 : 1;
     lineItems.push({
       id: 'driver-batta',
-      description: 'Driver Batta / Day Allowance',
-      qty: '1 Day',
-      rate: `₹${batta}`,
+      description: 'Driver Batta / Daily Allowance (Fixed ₹300/Day)',
+      qty: isMultipleOf300 ? `${days} Day${days > 1 ? 's' : ''}` : '1 Day',
+      rate: isMultipleOf300 ? '₹300 / Day' : `₹${batta}`,
       amount: batta
     });
   }

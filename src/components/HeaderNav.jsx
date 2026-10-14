@@ -47,7 +47,7 @@ export default function HeaderNav({
 ---------------------------------------
 *Invoice No:* ${invoice.invoiceNumber}
 *Customer:* ${invoice.customerName || 'Devotee / Passenger'}
-*Vehicle:* ${invoice.carType} (${invoice.vehicleNumber || 'Cab'})
+${invoice.passengersBoarded ? `*Passengers Boarded:* ${invoice.passengersBoarded} Persons\n` : ''}*Vehicle:* ${invoice.carType} (${invoice.vehicleNumber || 'Cab'})
 *Trip Type:* ${isRound ? `🔄 Round Trip (${invoice.roundTripDays?.length || 2} Days)` : '➡️ One-Way Drop'}
 *Route:* ${invoice.pickupLocation} ➡️ ${invoice.dropLocation}${itineraryLines ? `\n\n*📅 Day-Wise Itinerary:*${itineraryLines}` : ''}
 *Total Distance:* ${invoice.totalKm ? `${invoice.totalKm} KM` : 'N/A'}
